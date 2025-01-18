@@ -1,4 +1,4 @@
-# Pipeline for plasmidome analyses
+# Pipeline for plasmidome analysis
 This pipeline analyze a set of related plasmid sequences to unraveling their functional characteristics and genomic relationships. It was used in the publication: [Unraveling the plasmidome of Helicobacter pylori: an unexplored source of potential pathogenicity](https://www.biorxiv.org/content/10.1101/2025.01.06.631533v1)
 
 ## MobMess networks
