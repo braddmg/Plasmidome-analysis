@@ -77,7 +77,7 @@ anvi-compute-functional-enrichment -p Filo/Filo-PAN.db\
                                    --category-variable group \
                                    --annotation-source COG14_FUNCTION
 ```
-## Coding Sequences annotatgion with COG classifier
+## Coding Sequences annotation with COG classifier
 Aminoacid sequences were obtained with MobMess analysis and were divided in two files containing sequences of genes presented only in Group 1 and Group 2 of Helicobacter pylori plasmids.
 Each fasta aminoacid file was priocessed independent with the /work/bmendoza/pylori/repre/Genomes tool. 
 
