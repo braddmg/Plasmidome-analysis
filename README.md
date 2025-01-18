@@ -1,44 +1,38 @@
 # Pipeline for plasmidome analyses
-In this pipeline we analyze a set of related plasmid sequences to unraveling their functional characteristics and genomic relationships. 
+This pipeline analyze a set of related plasmid sequences to unraveling their functional characteristics and genomic relationships. It was used in the publication: [Unraveling the plasmidome of Helicobacter pylori: an unexplored source of potential pathogenicity](https://www.biorxiv.org/content/10.1101/2025.01.06.631533v1)
 
-There are multiple tools available for identifying plasmidic contigs in metagenomic data. In this workflow, we will use PlasX, a machine learning-based software designed for plasmid detection:
-[PlasX GitHub Repository](https://github.com/michaelkyu/PlasX)
-The following command processes all samples in FASTA format, filters out contigs shorter than 500 bp, annotates them using Anvi’o with the COG14 and Pfam databases, and assigns a PlasX score to each contig: 
+## MobMess networks
+We will employ the MobMess software to create plasmid networks and classify them into backbone, compound, fragment and maximal clusters. For more information about MobMess review the [Paper](https://www.nature.com/articles/s41564-024-01610-3):
+
+The following command processes all samples in FASTA format, filters out contigs shorter than 1000 bp, annotates them using Anvi’o with the COG14 and Pfam databases, and create the MobMess networks: 
+Files used in the analysis can be found in the repository
 ```bash
-for i in `ls *fasta | awk 'BEGIN{FS=".fasta"}{print $1}'`
-do
-anvi-script-reformat-fasta $i.fasta \
-                           -o $i.fa \
-                           -l 500 --seq-type NT --simplify-names --prefix $i
-anvi-gen-contigs-database -f $i.fa -o $i.db
-anvi-run-hmms -c $i.db
-anvi-export-gene-calls --gene-caller prodigal -c $i.db -o $i-gene-calls.txt
-done
+anvi-script-reformat-fasta plasmids.fasta \
+                           -o plasmids.fa \
+                           -l 0 --seq-type NT
+    anvi-gen-contigs-database -f plasmids.fa -o plasmids.db
+    anvi-run-hmms -c plasmids.db
+    anvi-export-gene-calls --gene-caller prodigal -c plasmids.db -o plasmids-gene-calls.txt
 
-for i in `ls *db | awk 'BEGIN{FS=".db"}{print $1}'`
-do
-anvi-run-ncbi-cogs -T 32 --cog-version COG14 --cog-data-dir /work/databases/anvio/COG_2014 -c $i.db
-anvi-run-pfams -T 32 --pfam-data-dir /work/bmendoza/Tesis/Data/plasmids/anvio/Pfam_v32 -c $i.db
-anvi-export-functions --annotation-sources COG14_FUNCTION,Pfam -c $i.db -o $i-cogs-and-pfams.txt
-done
+anvi-run-ncbi-cogs -T 64 --cog-version COG14 --cog-data-dir /work/databases/anvio/COG_2014 -c plasmids.db
+anvi-run-pfams -T 64 --pfam-data-dir /work/bmendoza/Tesis/Data/plasmids/anvio/Pfam_v32 -c plasmids.db
+anvi-export-functions --annotation-sources COG14_FUNCTION,Pfam -c plasmids.db -o plasmids-cogs-and-pfams.txt
 
-for i in `ls *fasta | awk 'BEGIN{FS=".fasta"}{print $1}'`
-do
 plasx search_de_novo_families \
-    -g $i-gene-calls.txt \
-    -o $i-de-novo-families.txt \
-    --threads 32 \
-    --splits 32 \
+    -g plasmids-gene-calls.txt \
+    -o plasmids-de-novo-families.txt \
+    --threads 64 \
+    --splits 64 \
     --overwrite
 
-plasx predict \
-    -a $i-cogs-and-pfams.txt $i-de-novo-families.txt \
-    -g $i-gene-calls.txt \
-    -o $i-scores.txt \
-    --overwrite
-done
+mobmess systems \
+    --sequences plasmids.fa \
+    --complete plasmids.txt \
+    --output mobmess \
+    --threads 64
+
 ```
-## Detecting antibiotic resistance genes (ARGs)
+## Alignment and visualization of specific related plasmids
 We can detect ARGs from fasta files with [ABRicate](https://github.com/tseemann/abricate)
 In this example, we employ the [CARD](https://card.mcmaster.ca) database, ABRicate supports several other databases. 
 
