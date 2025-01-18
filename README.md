@@ -1,10 +1,10 @@
 # Pipeline for plasmidome analysis
-This pipeline analyze a set of related plasmid sequences to unraveling their functional characteristics and genomic relationships. It was used in the publication: [Unraveling the plasmidome of Helicobacter pylori: an unexplored source of potential pathogenicity](https://www.biorxiv.org/content/10.1101/2025.01.06.631533v1)
+This pipeline analyzes plasmid sequences to uncover their functional characteristics and genomic relationships. It was used in the publication: [Unraveling the plasmidome of Helicobacter pylori: an unexplored source of potential pathogenicity](https://www.biorxiv.org/content/10.1101/2025.01.06.631533v1)
 
 ## MobMess networks
-We will employ the MobMess software to create plasmid networks and classify them into backbone, compound, fragment and maximal clusters. For more information about MobMess review the [Paper](https://www.nature.com/articles/s41564-024-01610-3):
+Using MobMess, plasmid networks are generated and classified into backbone, compound, fragment, and maximal clusters. For more information about MobMess see the [Paper](https://www.nature.com/articles/s41564-024-01610-3):
 
-The following command processes the plasmid.fasta file containing all plasmid sequences obtained from [PlasMidScope](https://plasmid.deepomics.org/database/plasmid), filters out contigs shorter than 1000 bp, annotates them using Anvi’o with the COG14 and Pfam databases, and create the MobMess networks: 
+The following command processes the plasmid.fasta file containing all plasmid sequences obtained from [PlasMidScope](https://plasmid.deepomics.org/database/plasmid), filters contigs < 1000 bp, annotates them with Anvi’o (using COG14 and Pfam databases), and creates MobMess networks.
 Files used in the analysis can be found in the repository
 ```bash
 anvi-script-reformat-fasta plasmids.fasta \
@@ -32,9 +32,8 @@ mobmess systems \
     --threads 64
 
 ```
-## Alignment and visualization of specific related plasmids
-We can visualize the alignment of specific plasmids in the network with the next command. 
-
+## Alignment and visualization of specific plasmid networks
+To visualize specific plasmids in the network, we used the next MobMess function:
 ```bash
 contigs=IMGPR_plasmid_2563367159_000001,COMPASS_NC_014556_1,IMGPR_plasmid_2617271162_000001,IMGPR_plasmid_2619619205_000001,COMPASS_NC_019561_1,IMGPR_plasmid_2619619172_000001
 mobmess visualize -s plasmids.fa -a plasmids-cogs-and-pfams.txt -g plasmids-gene-calls.txt -o figura/ -T 32 --contigs $contigs --align-blocks-height 1
@@ -42,24 +41,23 @@ mobmess visualize -s plasmids.fa -a plasmids-cogs-and-pfams.txt -g plasmids-gene
 ```
 
 ## Mash distance-based dendogram 
-Non-redundant representative plasmids were isoalted with the next command: 
+Non-redundant representative plasmids were separated with the next command: 
 
 ```bash
 seqtk subseq plasmids.fa representative.txt > nrplasmids.fasta
 ```
-We then separated plasmid sequences using a python script available in the repository:
+
+We then split plasmid sequences into multiple FASTA files using a Python script available in the repository:
 ```bash
 python sep.py nrplasmids.fasta
 ```
-Mash distance-based dendogram was created with the [Mashtree](https://github.com/lskatz/mashtree) software with the next command:
+Generate the dendrogram using [Mashtree](https://github.com/lskatz/mashtree):
 ```bash
 mashtree --mindepth 0 *.fasta --outtree H_pylori.tree
 ```
 ## Enrichment analysis
-Enrichment analysis was performed as indicated in the web tutorial: https://merenlab.org/2016/11/08/pangenomics-v2/
-We imported sequences individually to Anvio and perform the COG and Pfam annotation as indicated above in the MobMess section. Then we performed a pangenomic analyses and ran the enrichment analysis with the next command: 
+Enrichment analysis followed this [tutorial](https://merenlab.org/2016/11/08/pangenomics-v2/). Import sequences individually to Anvio and annotate them as described in the MobMess section. Then, perform pangenomic and enrichment analysis:
 
-Then we used the next command to perform the analysis:
 ```bash
 #Perform pangenome analysis
 anvi-gen-genomes-storage -e external-genomes.txt -o Filo-GENOMES.db 
@@ -78,8 +76,7 @@ anvi-compute-functional-enrichment -p Filo/Filo-PAN.db\
                                    --annotation-source COG14_FUNCTION
 ```
 ## Coding Sequences annotation with COG classifier
-Aminoacid sequences were obtained with MobMess analysis and were divided in two files containing sequences of genes presented only in Group 1 and Group 2 of Helicobacter pylori plasmids.
-Each fasta aminoacid file was priocessed independent with the /work/bmendoza/pylori/repre/Genomes tool. 
+Amino acid sequences from MobMess were divided into Group 1 and Group 2 plasmids (available in the repository). Each file was processed with the  [COGclassifier](https://github.com/moshi4/COGclassifier) tool. 
 
 ```bash
 COGclassifier -i G1.faa -o G1/
