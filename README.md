@@ -9,7 +9,7 @@ Files used in the analysis can be found in the repository
 ```bash
 anvi-script-reformat-fasta plasmids.fasta \
                            -o plasmids.fa \
-                           -l 0 --seq-type NT
+                           -l 1000 --seq-type NT
     anvi-gen-contigs-database -f plasmids.fa -o plasmids.db
     anvi-run-hmms -c plasmids.db
     anvi-export-gene-calls --gene-caller prodigal -c plasmids.db -o plasmids-gene-calls.txt
@@ -17,13 +17,6 @@ anvi-script-reformat-fasta plasmids.fasta \
 anvi-run-ncbi-cogs -T 64 --cog-version COG14 --cog-data-dir /work/databases/anvio/COG_2014 -c plasmids.db
 anvi-run-pfams -T 64 --pfam-data-dir /work/bmendoza/Tesis/Data/plasmids/anvio/Pfam_v32 -c plasmids.db
 anvi-export-functions --annotation-sources COG14_FUNCTION,Pfam -c plasmids.db -o plasmids-cogs-and-pfams.txt
-
-plasx search_de_novo_families \
-    -g plasmids-gene-calls.txt \
-    -o plasmids-de-novo-families.txt \
-    --threads 64 \
-    --splits 64 \
-    --overwrite
 
 mobmess systems \
     --sequences plasmids.fa \
