@@ -1,5 +1,5 @@
-# Pipeline for plasmidome analysis
-This pipeline analyzes plasmid sequences to uncover their functional characteristics and genomic relationships. It was used in the publication: [Unraveling the plasmidome of Helicobacter pylori: an unexplored source of potential pathogenicity](https://www.biorxiv.org/content/10.1101/2025.01.06.631533v1)
+# Pipeline for plasmidomic analyses
+This pipeline analyzes plasmid sequences to uncover their functional characteristics and genomic relationships. It was used in the publication: [Unraveling the plasmidome of Helicobacter pylori: an unexplored source of potential pathogenicity](https://www.biorxiv.org/content/10.1101/2025.01.06.631533v1).
 
 ## MobMess networks
 Using MobMess, plasmid networks are generated and classified into backbone, compound, fragment, and maximal clusters. For more information about MobMess see the [Paper](https://www.nature.com/articles/s41564-024-01610-3):
